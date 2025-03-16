@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace QuizAppForDriverLicense.Models
 {
-    public partial class QuizAppContext : IdentityDbContext<User>
+    public partial class QuizAppContext : IdentityDbContext<IdentityUser>
     {
         public QuizAppContext()
         {
@@ -36,6 +36,7 @@ namespace QuizAppForDriverLicense.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<User>().ToTable("AspNetUsers");
 
             modelBuilder.Entity<IdentityUserLogin<string>>()
                 .HasKey(l => new { l.LoginProvider, l.ProviderKey });

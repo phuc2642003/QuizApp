@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Đăng nhập</h2>
+    <form id="loginForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br>
+
+        <label for="password">Mật khẩu:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+
+        <button type="submit">Đăng nhập</button>
+    </form>
+
+    <p id="errorMsg" style="color: red;"></p>
+
+    <script>
+        $(document).ready(function() {
+            $("#loginForm").submit(function(event) {
+                event.preventDefault(); // Ngăn form reload trang
+
+                var email = $("#email").val();
+                var password = $("#password").val();
+
+                $.ajax({
+                    url: "http://localhost:5000/api/login", // Đổi theo URL API backend của bạn
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ email: email, password: password }),
+                    success: function(response) {
+                        localStorage.setItem("token", response.token); // Lưu token vào localStorage
+
+                        // Kiểm tra role
+                        if (response.roles.includes("Admin")) {
+                            window.location.href = "admin.html";
+                        } else if (response.roles.includes("User")) {
+                            window.location.href = "home.html";
+                        } else {
+                            $("#errorMsg").text("Bạn không có quyền truy cập!");
+                        }
+                    },
+                    error: function(xhr) {
+                        $("#errorMsg").text(xhr.responseText || "Đăng nhập thất bại!");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

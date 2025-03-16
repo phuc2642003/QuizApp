@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký</title>
+    <link rel="stylesheet" href="authStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Đăng Ký</h2>
+        <input type="text" id="fullName" placeholder="Full Name" required>
+        <input type="email" id="registerEmail" placeholder="Email" required>
+        <input type="password" id="registerPassword" placeholder="Mật khẩu" required>
+        <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+        <button onclick="register()">Đăng Ký</button>
+        <p>Đã có tài khoản? <a href="login.html">Đăng nhập</a></p>
+    </div>
+    <script>
+        function register() {
+            var fullName = $("#fullName").val();
+            var email = $("#registerEmail").val();
+            var password = $("#registerPassword").val();
+            var confirmPassword = $("#confirmPassword").val();
+    
+            if (password !== confirmPassword) {
+                alert("Mật khẩu không khớp!");
+                return;
+            }
+    
+            $.ajax({
+                url: "http://localhost:5121/api/auth/register", // Thay bằng URL API thật
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    fullName: fullName,
+                    email: email,
+                    password: password,
+                    confirmPassword: confirmPassword
+                }),
+                success: function (response) {
+                    alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                    window.location.href = "login.html";
+                },
+                error: function (xhr) {
+                    alert("Đăng ký thất bại: " + xhr.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

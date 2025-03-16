@@ -259,7 +259,5 @@ E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\zh-Hans\Microsoft.CodeA
 E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.Pkcs.dll
 E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\QuizAppForDriverLicense.staticwebassets.runtime.json
-E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.UI.dll
-E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\Microsoft.Extensions.FileProviders.Embedded.dll
-E:\FPT\Semester8\PRN231\QuizApp\Backend\obj\Debug\net6.0\QuizAppForDriverLicense.sourcelink.json
-E:\FPT\Semester8\PRN231\QuizApp\Backend\obj\Debug\net6.0\QuizAppF.0C77A59A.Up2Date
+E:\FPT\Semester8\PRN231\QuizApp\Backend\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\FPT\Semester8\PRN231\QuizApp\Backend\obj\Debug\net6.0\QuizAppForDriverLicense.csproj.CopyComplete

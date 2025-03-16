@@ -1,27 +1,59 @@
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Đăng nhập - Thi Bằng Lái Xe Máy</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập</title>
+    <link rel="stylesheet" href="authStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card p-4 shadow" style="width: 350px;">
-            <h4 class="text-center">Đăng nhập</h4>
-            <form>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Tên đăng nhập</label>
-                    <input type="text" class="form-control" id="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
-            </form>
-        </div>
+    <div class="container">
+        <h2>Đăng Nhập</h2>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Mật khẩu" required>
+        <button id="btnLogin">Đăng Nhập</button>    
+        <p>Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+        <p id="errorMsg" style="color: red;"></p>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+
+    <script>
+        $(document).ready(function() {
+            $("#btnLogin").click(function() {
+                var email = $("#loginEmail").val();
+                var password = $("#loginPassword").val();
+
+                if (!email || !password) {
+                    $("#errorMsg").text("Vui lòng nhập đầy đủ thông tin.");
+                    return;
+                }
+
+                $.ajax({
+                    url: "http://localhost:5121/api/auth/login", // Đổi URL theo API backend của bạn
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ email: email, password: password }),
+                    success: function(response) {
+                        localStorage.setItem("token", response.token);
+                        localStorage.setItem("userName", response.userName);
+                        localStorage.setItem("roles", JSON.stringify(response.roles));
+
+                        // Kiểm tra role để điều hướng
+                        if (response.roles.includes("Admin")) {
+                            window.location.href = "admin.html";
+                        } else if (response.roles.includes("User")) {
+                            window.location.href = "home.html";
+                        } else {
+                            $("#errorMsg").text("Bạn không có quyền truy cập!");
+                        }
+                    },
+                    error: function(xhr) {
+                        $("#errorMsg").text(xhr.responseText || "Đăng nhập thất bại!");
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
