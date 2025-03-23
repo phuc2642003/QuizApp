@@ -17,7 +17,7 @@ namespace QuizAppForDriverLicense.Models
         public string? ImgUrl { get; set; }
         public bool IsCriticalFail { get; set; }
         public int CategoryId { get; set; }
-        public int ExamId { get; set; }
+        public int? ExamId { get; set; }
 
         public virtual Category Category { get; set; } = null!;
         public virtual ICollection<Answer> Answers { get; set; }

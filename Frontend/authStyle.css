@@ -25,21 +25,21 @@ input, button {
 }
 
 button {
-    background-color: #007bff;
+    background-color: #000000;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #000000;
 }
 
 .navbar {
     display: flex;
     justify-content: space-between;
     padding: 15px;
-    background: #007bff;
+    background: #000000;
     color: white;
 }
 

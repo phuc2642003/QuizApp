@@ -77,7 +77,7 @@ namespace QuizAppForDriverLicense.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Content)
-                    .HasColumnType("text")
+                    .HasColumnType("nvarchar(max)")
                     .HasColumnName("content");
 
                 entity.Property(e => e.Name)
@@ -112,7 +112,9 @@ namespace QuizAppForDriverLicense.Models
 
                 entity.Property(e => e.CategoryId).HasColumnName("categoryId");
 
-                entity.Property(e => e.ExamId).HasColumnName("examId");
+                entity.Property(e => e.ExamId)
+                        .HasColumnName("examId")
+                        .IsRequired(false);
 
                 entity.Property(e => e.ImgUrl)
                     .HasColumnType("text")
