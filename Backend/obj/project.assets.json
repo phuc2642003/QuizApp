@@ -10688,11 +10688,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\FPT\\Semester8\\PRN231\\QuizApp\\Backend\\QuizAppForDriverLicense.csproj",
+      "projectUniqueName": "E:\\FPT\\Semester8\\PRN231\\QuizAppVersion2\\QuizApp\\Backend\\QuizAppForDriverLicense.csproj",
       "projectName": "QuizAppForDriverLicense",
-      "projectPath": "E:\\FPT\\Semester8\\PRN231\\QuizApp\\Backend\\QuizAppForDriverLicense.csproj",
+      "projectPath": "E:\\FPT\\Semester8\\PRN231\\QuizAppVersion2\\QuizApp\\Backend\\QuizAppForDriverLicense.csproj",
       "packagesPath": "C:\\Users\\phuc2\\.nuget\\packages\\",
-      "outputPath": "E:\\FPT\\Semester8\\PRN231\\QuizApp\\Backend\\obj\\",
+      "outputPath": "E:\\FPT\\Semester8\\PRN231\\QuizAppVersion2\\QuizApp\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
