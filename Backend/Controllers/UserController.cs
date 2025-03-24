@@ -7,5 +7,6 @@ namespace QuizAppForDriverLicense.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+
     }
 }

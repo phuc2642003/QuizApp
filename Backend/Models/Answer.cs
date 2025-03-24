@@ -8,6 +8,7 @@ namespace QuizAppForDriverLicense.Models
         public Answer()
         {
             Temps = new HashSet<RandomTemp>();
+            UserAnswers = new HashSet<UserAnswer>();
         }
 
         public int Id { get; set; }
@@ -18,5 +19,7 @@ namespace QuizAppForDriverLicense.Models
         public virtual Question Question { get; set; } = null!;
 
         public virtual ICollection<RandomTemp> Temps { get; set; }
+
+        public virtual ICollection<UserAnswer> UserAnswers { get; set; }
     }
 }

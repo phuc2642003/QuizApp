@@ -58,7 +58,7 @@ namespace QuizAppForDriverLicense.Controllers
             var roles = await _userManager.GetRolesAsync(user);
             var token = GenerateJwtToken(user, roles);
 
-            return Ok(new { token, roles, userName = user.UserName });
+            return Ok(new { token, roles, userName = user.UserName, userId = user.Id });
         }
 
         [Authorize]

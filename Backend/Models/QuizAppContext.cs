@@ -17,13 +17,15 @@ namespace QuizAppForDriverLicense.Models
             : base(options)
         {
         }
-
+        public virtual DbSet<User> User { get; set; } = null!;
         public virtual DbSet<Answer> Answers { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Exam> Exams { get; set; } = null!;
         public virtual DbSet<Question> Questions { get; set; } = null!;
         public virtual DbSet<RandomTemp> RandomTemps { get; set; } = null!;
         public virtual DbSet<UserExam> UserExams { get; set; } = null!;
+
+        public virtual DbSet<UserAnswer> UserAnswers { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -217,6 +219,31 @@ namespace QuizAppForDriverLicense.Models
 
                             j.IndexerProperty<int>("QuestionId").HasColumnName("questionId");
                         });
+            });
+
+            modelBuilder.Entity<UserAnswer>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .UseIdentityColumn()  // Dành cho SQL Server
+                    .HasColumnName("id");
+
+                entity.Property(e => e.AnswerId).HasColumnName("answerId");
+
+                entity.Property(e => e.UserId)
+                    .HasMaxLength(450)
+                    .HasColumnName("userId");
+
+                entity.HasOne(d => d.Answer)
+                    .WithMany(p => p.UserAnswers)
+                    .HasForeignKey(d => d.AnswerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserAnswers_Answer");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserAnswers)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_UserAnswers_AspNetUsers");
             });
 
             modelBuilder.Entity<UserExam>(entity =>

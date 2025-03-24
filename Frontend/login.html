@@ -37,6 +37,7 @@
                     success: function(response) {
                         localStorage.setItem("token", response.token);
                         localStorage.setItem("userName", response.userName);
+                        localStorage.setItem("userId", response.userId);
                         localStorage.setItem("roles", JSON.stringify(response.roles));
 
                         // Kiểm tra role để điều hướng

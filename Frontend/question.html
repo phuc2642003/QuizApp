@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz - Bằng A1</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         .header {
             background-color: #3b5998;
@@ -15,11 +17,13 @@
             font-size: 20px;
             font-weight: bold;
         }
+
         .quiz-container {
             display: flex;
             justify-content: center;
             margin-top: 20px;
         }
+
         .question-box {
             flex: 5;
             background: white;
@@ -27,6 +31,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .quiz-nav {
             flex: 3;
             background: white;
@@ -35,6 +40,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin-left: 20px;
         }
+
         .quiz-nav .nav-link {
             width: 40px;
             height: 40px;
@@ -43,26 +49,97 @@
             text-align: center;
             line-height: 30px;
         }
+
+        .header-title {
+            background-color: #2c4b9b;
+            /* Màu nền xanh */
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            /* Cách nội dung bên dưới */
+        }
+
+        .question-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-nav {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .refresh-btn {
+            margin-left: 10px;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .refresh-btn i {
+            margin-right: 5px;
+        }
     </style>
 </head>
+
 <body>
     <div id="navbar-container"></div>
-    <!-- <div class="header">Khái niệm và quy tắc</div> -->
+
+
     <div class="container quiz-container">
+        <div class="row">
+            <div class="col-8 offset-2 text-center header-title">
+                Khái niệm và quy tắc
+                <button class="btn refresh-btn" onclick="deleteAnswersAndReload()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
         <div class="tab-content question-box"></div>
         <div class="quiz-nav">
             <h6>Quiz Navigation</h6>
             <div class="d-flex flex-wrap nav nav-tabs" role="tablist"></div>
-            <p class="mt-3 text-danger">Finish attempt ...</p>
-            <p>Time left: <span class="text-danger">0:29:55</span></p>
         </div>
     </div>
     <script src="authScript.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function () {
+        function deleteAnswersAndReload() {
+            var userId = localStorage.getItem("userId");
+
+            if (!userId) {
+                alert("Không tìm thấy userId!");
+                return;
+            }
+
+            if (!confirm("Bạn có chắc chắn muốn làm lại toàn bộ câu trả lời không?")) {
+                return;
+            }
+
+            $.ajax({
+                url: `http://localhost:5121/api/Answer/userId?userId=${userId}`,
+                type: 'DELETE',
+                success: function (response) {
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("Lỗi khi xóa dữ liệu!");
+                }
+            });
+        }
+        function loadQuestions() {
             const urlParams = new URLSearchParams(window.location.search);
             let categoryId = urlParams.get('categoryId');
+            let userId = localStorage.getItem('userId');
 
             if (!categoryId) {
                 alert("Category ID không hợp lệ!");
@@ -77,30 +154,44 @@
                     let navTabs = $(".quiz-nav .nav-tabs");
                     questionBox.empty();
                     navTabs.empty();
-                    
+
                     if (!data || data.length === 0) {
                         questionBox.html("<p class='text-danger'>Không có câu hỏi nào cho danh mục này!</p>");
-                        console.log("null excep");
                         return;
                     }
-                    console.log("not null");
+
                     data.forEach((q, index) => {
+                        let userAnswered = q.answers.find(a => a.userAnswers.some(u => u.userId == userId));
                         let isActive = index === 0 ? "show active" : "";
                         let questionHtml = `
-                            <div class="tab-pane fade ${isActive}" id="question${q.id}">
-                                <h5>${q.name}</h5>
-                                <p><strong>${q.content}</strong></p>
-                                <div class="list-group">
-                                    ${q.answers.map(a => `
-                                        <label class="list-group-item">
-                                            <input type="radio" name="answer${q.id}" class="me-2 answer-radio" value="${a.id}" data-question-id="${q.id}"> ${a.content}
-                                        </label>
-                                    `).join('')}
-                                </div>
-                            </div>`;
+                        <div class="tab-pane fade ${isActive}" id="question${q.id}">
+                            <h5>${q.name}</h5>
+                            <p><strong>${q.content}</strong></p>
+                            <div class="list-group">
+                                ${q.answers.map(a => {
+                            let userAnswer = a.userAnswers.find(u => u.userId == userId);
+                            let isCorrect = a.isTrue;
+                            let answerClass = "";
+                            let isSelected = userAnswer ? "checked" : "";
+
+                            if (userAnswer) {
+                                answerClass = isCorrect ? "text-success" : "text-danger";
+                            }
+                            if (!isCorrect && q.answers.some(ans => ans.isTrue)) {
+                                answerClass += " wrong-answer";
+                            }
+                            return `
+                                        <label class="list-group-item ${answerClass}">
+                                            <input type="radio" name="answer${q.id}" class="me-2 answer-radio" value="${a.id}" ${isSelected} ${userAnswered ? 'disabled' : ''}> ${a.content}
+                                        </label>`;
+                        }).join('')}
+                            </div>
+                        </div>`;
+
                         questionBox.append(questionHtml);
 
-                        let navHtml = `<a class="btn btn-outline-primary nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${index + 1}</a>`;
+                        let navClass = userAnswered ? "text-success" : "text-primary";
+                        let navHtml = `<a class="btn ${navClass} nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${q.id}</a>`;
                         navTabs.append(navHtml);
                     });
                 },
@@ -108,20 +199,26 @@
                     $(".question-box").html(`<p class='text-danger'>Lỗi khi tải câu hỏi: ${xhr.responseText || error}</p>`);
                 }
             });
-            
-            $(".answer-radio").change(function () {
-            let questionId = $(this).data("question-id");
+        }
+        $(document).ready(function () {
+
+            loadQuestions();
+
+        });
+        $(document).on("change", ".answer-radio", function () {
+            let userId = localStorage.getItem("userId");
             let answerId = $(this).val();
 
             $.ajax({
-                url: "http://localhost:5121/api/Answer/Submit",
+                url: "http://localhost:5121/api/UserAnswer",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
-                    questionId: questionId,
-                    answerId: answerId
+                    answerId: answerId,
+                    userId: userId
                 }),
                 success: function (response) {
+                    loadQuestions();
                     console.log("Câu trả lời đã được gửi thành công:", response);
                 },
                 error: function (xhr, status, error) {
@@ -129,8 +226,8 @@
                 }
             });
         });
-        });
 
-        </script>
+    </script>
 </body>
+
 </html>

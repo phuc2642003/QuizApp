@@ -18,6 +18,7 @@ namespace QuizAppForDriverLicense.Repository
             {
                 questions = _context.Questions
                     .Include(x=>x.Answers)
+                    .ThenInclude(a=>a.UserAnswers)
                     .Where(x => x.CategoryId == categoryId)
                     .Select(q => new Question
                     {
@@ -31,7 +32,13 @@ namespace QuizAppForDriverLicense.Repository
                         {
                             Id = a.Id,
                             Content = a.Content,
-                            IsTrue = a.IsTrue
+                            IsTrue = a.IsTrue,
+                            UserAnswers = a.UserAnswers.Select(u=> new UserAnswer
+                            {
+                                Id=u.Id,
+                                UserId = u.UserId,
+                                AnswerId = u.AnswerId
+                            }).ToList()
                         }).ToList()
                     })
                     .ToList();
@@ -39,6 +46,7 @@ namespace QuizAppForDriverLicense.Repository
             }
             questions = _context.Questions
                 .Include(x=>x.Answers)
+                .ThenInclude(a => a.UserAnswers)
                 .Select(q => new Question
                 {
                     Id = q.Id,
@@ -51,11 +59,22 @@ namespace QuizAppForDriverLicense.Repository
                     {
                         Id = a.Id,
                         Content = a.Content,
-                        IsTrue = a.IsTrue
+                        IsTrue = a.IsTrue,
+                        UserAnswers = a.UserAnswers.Select(u => new UserAnswer
+                        {
+                            Id = u.Id,
+                            UserId = u.UserId,
+                            AnswerId = u.AnswerId
+                        }).ToList()
                     }).ToList()
                 })
                 .ToList();
             return questions;
+        }
+
+        public List<Question> GetRandomQuestionForRandomTemp()
+        {
+            throw new NotImplementedException();
         }
     }
 }
