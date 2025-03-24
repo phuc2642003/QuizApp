@@ -56,7 +56,7 @@ namespace QuizAppForDriverLicense.Models
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Content)
-                    .HasColumnType("text")
+                    .HasColumnType("nvarchar(max)")
                     .HasColumnName("content");
 
                 entity.Property(e => e.IsTrue).HasColumnName("isTrue");
@@ -124,13 +124,20 @@ namespace QuizAppForDriverLicense.Models
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(50)
-                    .HasColumnName("name");
+                    .HasColumnName("name")
+                    .IsRequired(false);
+
+                entity.Property(e => e.Content)
+                   .HasColumnType("nvarchar(max)")
+                    .HasColumnName("content");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Questions)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Question_Category");
+
+                
 
                 entity.HasMany(d => d.Exams)
                     .WithMany(p => p.Questions)

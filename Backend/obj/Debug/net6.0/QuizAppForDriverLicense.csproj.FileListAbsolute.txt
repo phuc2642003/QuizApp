@@ -523,5 +523,4 @@ E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\refint\
 E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\QuizAppForDriverLicense.pdb
 E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\QuizAppForDriverLicense.genruntimeconfig.cache
 E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\ref\QuizAppForDriverLicense.dll
-E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\QuizAppForDriverLicense.sourcelink.json
-E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\QuizAppF.0C77A59A.Up2Date
+E:\FPT\Semester8\PRN231\QuizAppVersion2\QuizApp\Backend\obj\Debug\net6.0\QuizAppForDriverLicense.csproj.CopyComplete

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using QuizAppForDriverLicense.Models;
+using QuizAppForDriverLicense.Repository;
+using QuizAppForDriverLicense.Repository.IRepository;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +47,9 @@ builder.Services.AddCors(options =>
                         .AllowAnyMethod()
                         .AllowAnyHeader());
 });
+
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
