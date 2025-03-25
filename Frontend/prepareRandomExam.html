@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Test 2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <script src="authScript.js"></script>
+
+</head>
+
+<body class="bg-light">
+    <div id="navbar-container"></div>
+
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-body">
+                <h1 class="text-center text-primary">Đề ngẫu nhiên</h1>
+                <p class="text-center">Số lượng câu hỏi: <strong>25</strong></p>
+                <p class="text-center">Thời gian: <strong>19 phút</strong></p>
+                <p class="text-center">Số lượng câu hỏi cần trả lời đúng: <strong>21</strong></p>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white text-center">
+                <h5>Tóm tắt các lần làm trước</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered text-center">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Lượt</th>
+                            <th>Trạng thái</th>
+                            <th>Điểm</th>
+                            <th>Xem lại</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <button id="btn-start" class="btn btn-success">Làm bài</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#btn-start").click(function () {
+                let userId = localStorage.getItem("userId");
+                let randomTempData = {
+                    UserId: userId,
+                    Content: "Some content",
+                    PassResult: 21,
+                    Result: 0
+                };
+
+
+                $.ajax({
+                    url: "http://localhost:5121/api/RandomTemp",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(randomTempData),
+                    success: function () {
+                        console.log("Thêm RandomTemp thành công");
+
+
+                        $.ajax({
+                            url: `http://localhost:5121/api/Question/AddToTemp/${userId}`,
+                            type: "POST",
+                            success: function () {
+                                console.log("Thêm câu hỏi ngẫu nhiên thành công");
+                                $.ajax({
+                                    url: `http://localhost:5121/api/RandomTemp/LastTemp/${userId}`,
+                                    type: "GET",
+                                    success: function (response) {
+                                        console.log("Lấy tempId thành công:", response);
+                                        let tempId = response.id;
+
+
+                                        window.location.href = `randomExam.html?tempId=${tempId}`;
+                                    },
+                                    error: function () {
+                                        console.log("Lấy tempId thất bại");
+                                    }
+                                });
+                            },
+                            error: function () {
+                                console.log("Thêm câu hỏi thất bại");
+                            }
+                        });
+                    },
+                    error: function () {
+                        console.log("Thêm RandomTemp thất bại");
+                    }
+                });
+            });
+
+            var userId = localStorage.getItem("userId");
+
+            $.ajax({
+                url: `http://localhost:5121/api/TempResult/History/${userId}`,
+                method: "GET",
+                success: function (data) {
+                    var tbody = $("#historyTableBody");
+                    tbody.empty(); // Xóa dữ liệu cũ
+
+                    if (data.length === 0) {
+                        tbody.append("<tr><td colspan='4'>Không có dữ liệu</td></tr>");
+                        return;
+                    }
+
+                    $.each(data, function (index, item) {
+                        var statusText = item.pass ? "Đạt" : "Chưa đạt";
+                        var statusClass = item.pass ? "" : "text-danger fw-bold"; // In đỏ nếu không đạt
+                        var point = item.point > 0 ? item.point.toFixed(2) : "Chưa có điểm";
+                        var rowClass = item.pass ? "table-success" : "table-warning"; // Xanh nếu đạt, vàng nếu chưa đạt
+                        var reviewLink = `<a href="review.html?tempId=${item.tempId}" class="btn btn-link">Review</a>`;
+
+                        var row = `<tr class="${rowClass}">
+                            <td>${index + 1}</td>
+                            <td class="${statusClass}">${statusText}</td> 
+                            <td>${point}</td>
+                            <td>${reviewLink}</td>
+                        </tr>`;
+                        tbody.append(row);
+                    });
+                },
+                error: function () {
+                    $("#historyTableBody").html("<tr><td colspan='4'>Lỗi khi tải dữ liệu</td></tr>");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

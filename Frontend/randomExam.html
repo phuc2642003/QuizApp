@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
+
     <style>
         .header {
             background-color: #3b5998;
@@ -99,56 +99,32 @@
     <div class="container quiz-container">
         <div class="row">
             <div class="col-8 offset-2 text-center header-title">
-                Khái niệm và quy tắc
-                <button class="btn refresh-btn" onclick="deleteAnswersAndReload()">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
+                Đề ngẫu nhiên
             </div>
         </div>
         <div class="tab-content question-box"></div>
+
         <div class="quiz-nav">
             <h6>Quiz Navigation</h6>
             <div class="d-flex flex-wrap nav nav-tabs" role="tablist"></div>
+            <button class="btn btn-success">Submit</button>
         </div>
     </div>
     <script src="authScript.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function deleteAnswersAndReload() {
-            var userId = localStorage.getItem("userId");
-
-            if (!userId) {
-                alert("Không tìm thấy userId!");
-                return;
-            }
-
-            if (!confirm("Bạn có chắc chắn muốn làm lại toàn bộ câu trả lời không?")) {
-                return;
-            }
-
-            $.ajax({
-                url: `http://localhost:5121/api/Answer/userId?userId=${userId}`,
-                type: 'DELETE',
-                success: function (response) {
-                    location.reload();
-                },
-                error: function (xhr) {
-                    alert("Lỗi khi xóa dữ liệu!");
-                }
-            });
-        }
         function loadQuestions() {
             const urlParams = new URLSearchParams(window.location.search);
-            let categoryId = urlParams.get('categoryId');
+            let tempId = urlParams.get('tempId');
             let userId = localStorage.getItem('userId');
 
-            if (!categoryId) {
+            if (!tempId) {
                 alert("Category ID không hợp lệ!");
                 return;
             }
 
             $.ajax({
-                url: `http://localhost:5121/api/Question/${categoryId}`,
+                url: `http://localhost:5121/api/Question/RandomTemp/${tempId}`,
                 method: "GET",
                 success: function (data) {
                     let questionBox = $(".question-box");
@@ -162,37 +138,22 @@
                     }
 
                     data.forEach((q, index) => {
-                        let userAnswered = q.answers.find(a => a.userAnswers.some(u => u.userId == userId));
                         let isActive = index === 0 ? "show active" : "";
                         let questionHtml = `
-                        <div class="tab-pane fade ${isActive}" id="question${q.id}">
-                            <h5>${q.name}</h5>
-                            <p><strong>${q.content}</strong></p>
-                            <div class="list-group">
-                                ${q.answers.map(a => {
-                            let userAnswer = a.userAnswers.find(u => u.userId == userId);
-                            let isCorrect = a.isTrue;
-                            let answerClass = "";
-                            let isSelected = userAnswer ? "checked" : "";
-
-                            if (userAnswer) {
-                                answerClass = isCorrect ? "text-success" : "text-danger";
-                            }
-                            if (!isCorrect && q.answers.some(ans => ans.isTrue)) {
-                                answerClass += " wrong-answer";
-                            }
-                            return `
-                                        <label class="list-group-item ${answerClass}">
-                                            <input type="radio" name="answer${q.id}" class="me-2 answer-radio" value="${a.id}" ${isSelected} ${userAnswered ? 'disabled' : ''}> ${a.content}
-                                        </label>`;
-                        }).join('')}
-                            </div>
-                        </div>`;
-
+                    <div class="tab-pane fade ${isActive}" id="question${q.id}">
+                        <h5>${q.name}</h5>
+                        <p><strong>${q.content}</strong></p>
+                        <div class="list-group">
+                            ${q.answers.map(a => `
+                                <label class="list-group-item">
+                                    <input type="radio" name="answer${q.id}" class="me-2" value="${a.id}"> ${a.content}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>`;
                         questionBox.append(questionHtml);
 
-                        let navClass = userAnswered ? "text-success" : "text-primary";
-                        let navHtml = `<a class="btn ${navClass} nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${q.id}</a>`;
+                        let navHtml = `<a class="btn btn-outline-primary nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${index + 1}</a>`;
                         navTabs.append(navHtml);
                     });
                 },
@@ -201,33 +162,49 @@
                 }
             });
         }
-        $(document).ready(function () {
+        function submitAnswers() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let tempId = urlParams.get('tempId');
 
-            loadQuestions();
+            if (!tempId) {
+                alert("Temp ID không hợp lệ!");
+                return;
+            }
 
-        });
-        $(document).on("change", ".answer-radio", function () {
-            let userId = localStorage.getItem("userId");
-            let answerId = $(this).val();
+            let selectedAnswers = [];
+
+            $(".question-box input[type='radio']:checked").each(function () {
+                selectedAnswers.push(parseInt($(this).val()));
+            });
+
+            if (selectedAnswers.length === 0) {
+                alert("Bạn chưa chọn câu trả lời nào!");
+                return;
+            }
 
             $.ajax({
-                url: "http://localhost:5121/api/UserAnswer",
+                url: `http://localhost:5121/api/RandomTemp/Submit`,
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
-                    answerId: answerId,
-                    userId: userId
+                    answerId: selectedAnswers,
+                    tempId: parseInt(tempId)
                 }),
-                success: function (response) {
-                    loadQuestions();
-                    console.log("Câu trả lời đã được gửi thành công:", response);
+                success: function () {
+                    alert("Nộp bài thành công!");
+                    window.location.href = `review.html?tempId=${tempId}`; // Điều hướng đến trang kết quả (nếu có)
                 },
-                error: function (xhr, status, error) {
-                    console.error("Lỗi khi gửi câu trả lời:", xhr.responseText || error);
+                error: function (xhr) {
+                    alert("Lỗi khi nộp bài: " + (xhr.responseText || "Không xác định"));
                 }
             });
+        }
+        $(document).ready(function () {
+            loadQuestions();
+            $(".quiz-nav button").click(function () {
+                submitAnswers();
+            });
         });
-
     </script>
 </body>
 

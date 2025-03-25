@@ -95,7 +95,7 @@
 <body>
     <div id="navbar-container"></div>
 
-
+    <a class="btn" href="prepareRandomExam.html"><i class="fas fa-arrow-left"></i> </a>
     <div class="container quiz-container">
         <div class="row">
             <div class="col-8 offset-2 text-center header-title">
@@ -139,16 +139,16 @@
         }
         function loadQuestions() {
             const urlParams = new URLSearchParams(window.location.search);
-            let categoryId = urlParams.get('categoryId');
+            let tempId = urlParams.get('tempId');
             let userId = localStorage.getItem('userId');
 
-            if (!categoryId) {
-                alert("Category ID không hợp lệ!");
+            if (!tempId) {
+                alert("Temp ID không hợp lệ!");
                 return;
             }
 
             $.ajax({
-                url: `http://localhost:5121/api/Question/${categoryId}`,
+                url: `http://localhost:5121/api/Question/RandomTemp/${tempId}`,
                 method: "GET",
                 success: function (data) {
                     let questionBox = $(".question-box");
@@ -162,37 +162,22 @@
                     }
 
                     data.forEach((q, index) => {
-                        let userAnswered = q.answers.find(a => a.userAnswers.some(u => u.userId == userId));
                         let isActive = index === 0 ? "show active" : "";
                         let questionHtml = `
-                        <div class="tab-pane fade ${isActive}" id="question${q.id}">
-                            <h5>${q.name}</h5>
-                            <p><strong>${q.content}</strong></p>
-                            <div class="list-group">
-                                ${q.answers.map(a => {
-                            let userAnswer = a.userAnswers.find(u => u.userId == userId);
-                            let isCorrect = a.isTrue;
-                            let answerClass = "";
-                            let isSelected = userAnswer ? "checked" : "";
-
-                            if (userAnswer) {
-                                answerClass = isCorrect ? "text-success" : "text-danger";
-                            }
-                            if (!isCorrect && q.answers.some(ans => ans.isTrue)) {
-                                answerClass += " wrong-answer";
-                            }
-                            return `
-                                        <label class="list-group-item ${answerClass}">
-                                            <input type="radio" name="answer${q.id}" class="me-2 answer-radio" value="${a.id}" ${isSelected} ${userAnswered ? 'disabled' : ''}> ${a.content}
-                                        </label>`;
-                        }).join('')}
-                            </div>
-                        </div>`;
-
+                    <div class="tab-pane fade ${isActive}" id="question${q.id}">
+                        <h5>${q.name}</h5>
+                        <p><strong>${q.content}</strong></p>
+                        <div class="list-group">
+                            ${q.answers.map(a => `
+                                <label class="list-group-item">
+                                    <input type="radio" name="answer${q.id}" class="me-2" value="${a.id}"> ${a.content}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>`;
                         questionBox.append(questionHtml);
 
-                        let navClass = userAnswered ? "text-success" : "text-primary";
-                        let navHtml = `<a class="btn ${navClass} nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${q.id}</a>`;
+                        let navHtml = `<a class="btn btn-outline-primary nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${index + 1}</a>`;
                         navTabs.append(navHtml);
                     });
                 },
@@ -205,27 +190,6 @@
 
             loadQuestions();
 
-        });
-        $(document).on("change", ".answer-radio", function () {
-            let userId = localStorage.getItem("userId");
-            let answerId = $(this).val();
-
-            $.ajax({
-                url: "http://localhost:5121/api/UserAnswer",
-                method: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    answerId: answerId,
-                    userId: userId
-                }),
-                success: function (response) {
-                    loadQuestions();
-                    console.log("Câu trả lời đã được gửi thành công:", response);
-                },
-                error: function (xhr, status, error) {
-                    console.error("Lỗi khi gửi câu trả lời:", xhr.responseText || error);
-                }
-            });
         });
 
     </script>

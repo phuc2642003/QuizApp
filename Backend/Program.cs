@@ -51,6 +51,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IUserAnswerRepository, UserAnswerRepository>();
 builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+builder.Services.AddScoped<IRandomTempRepository, RandomTempRepository>();
 
 var app = builder.Build();
 
