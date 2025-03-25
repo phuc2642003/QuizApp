@@ -140,27 +140,36 @@
                     data.forEach((q, index) => {
                         let isActive = index === 0 ? "show active" : "";
                         let questionHtml = `
-                    <div class="tab-pane fade ${isActive}" id="question${q.id}">
-                        <h5>${q.name}</h5>
-                        <p><strong>${q.content}</strong></p>
-                        <div class="list-group">
-                            ${q.answers.map(a => `
-                                <label class="list-group-item">
-                                    <input type="radio" name="answer${q.id}" class="me-2" value="${a.id}"> ${a.content}
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>`;
+                            <div class="tab-pane fade ${isActive}" id="question${q.id}">
+                                <h5>Câu ${index + 1}</h5>
+                                <p><strong>${q.content}</strong></p>
+                                <div class="list-group">
+                                    ${q.answers.map(a => `
+                                        <label class="list-group-item">
+                                            <input type="radio" name="answer${q.id}" class="me-2 answer-radio" value="${a.id}" data-question-id="${q.id}"> ${a.content}
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>`;
                         questionBox.append(questionHtml);
 
-                        let navHtml = `<a class="btn btn-outline-primary nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}">${index + 1}</a>`;
+                        let navHtml = `<a class="btn btn-outline-primary text-dark nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#question${q.id}" id="nav-question${q.id}">${index + 1}</a>`;
                         navTabs.append(navHtml);
+                    });
+
+                    $(".answer-radio").on("change", function () {
+                        let questionId = $(this).data("question-id");
+                        let navItem = $(`#nav-question${questionId}`);
+
+                        navItem.removeClass("text-dark"); 
+                        navItem.addClass("text-success"); 
                     });
                 },
                 error: function (xhr, status, error) {
                     $(".question-box").html(`<p class='text-danger'>Lỗi khi tải câu hỏi: ${xhr.responseText || error}</p>`);
                 }
             });
+
         }
         function submitAnswers() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -179,6 +188,10 @@
 
             if (selectedAnswers.length === 0) {
                 alert("Bạn chưa chọn câu trả lời nào!");
+                return;
+            }
+
+            if (!confirm("Bạn có chắc chắn muốn nộp bài không?")) {
                 return;
             }
 
