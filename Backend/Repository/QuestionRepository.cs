@@ -41,6 +41,36 @@ namespace QuizAppForDriverLicense.Repository
             return questions;
         }
 
+        public List<Question> GetCriticalQuestion()
+        {
+            return _context.Questions
+                .Include(q => q.Answers)
+                .ThenInclude(a => a.UserAnswers)
+                .Where(q=>q.IsCriticalFail)
+                .Select(q => new Question
+                {
+                    Id = q.Id,
+                    Name = q.Name,
+                    Content = q.Content,
+                    ImgUrl = q.ImgUrl,
+                    IsCriticalFail = q.IsCriticalFail,
+                    CategoryId = q.CategoryId,
+                    Answers = q.Answers.Select(a => new Answer
+                    {
+                        Id = a.Id,
+                        Content = a.Content,
+                        IsTrue = a.IsTrue,
+                        UserAnswers = a.UserAnswers.Select(u => new UserAnswer
+                        {
+                            Id = u.Id,
+                            UserId = u.UserId,
+                            AnswerId = u.AnswerId
+                        }).ToList()
+                    }).ToList()
+                })
+                .ToList();
+        }
+
         public List<Question> GetQuestionsByCategoryId(int? categoryId)
         {
             return _context.Questions

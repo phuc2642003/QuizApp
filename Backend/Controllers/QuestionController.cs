@@ -43,6 +43,14 @@ namespace QuizAppForDriverLicense.Controllers
             return Ok(questions);
         }
 
+        [HttpGet("Critical")]
+        public IActionResult Get()
+        {
+            var criticalQuestions = _questionRepository.GetCriticalQuestion();
+
+            return Ok(criticalQuestions);
+        }
+
         
     }
 }

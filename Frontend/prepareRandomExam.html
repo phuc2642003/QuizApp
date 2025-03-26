@@ -37,7 +37,7 @@
                         <tr>
                             <th>Lượt</th>
                             <th>Trạng thái</th>
-                            <th>Điểm</th>
+                            <th>Số câu đúng</th>
                             <th>Xem lại</th>
                         </tr>
                     </thead>
@@ -120,7 +120,7 @@
                     $.each(data, function (index, item) {
                         var statusText = item.pass ? "Đạt" : "Chưa đạt";
                         var statusClass = item.pass ? "" : "text-danger fw-bold"; // In đỏ nếu không đạt
-                        var point = item.point > 0 ? item.point.toFixed(2) : "Chưa có điểm";
+                        var point = item.point > 0 ? item.point.toFixed(0) : "Chưa có điểm";
                         var rowClass = item.pass ? "table-success" : "table-warning"; // Xanh nếu đạt, vàng nếu chưa đạt
                         var reviewLink = `<a href="review.html?tempId=${item.tempId}" class="btn btn-link">Review</a>`;
 

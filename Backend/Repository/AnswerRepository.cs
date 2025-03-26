@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using QuizAppForDriverLicense.Models;
 using QuizAppForDriverLicense.Repository.IRepository;
+using System.IO.Pipes;
 
 namespace QuizAppForDriverLicense.Repository
 {
@@ -19,6 +21,21 @@ namespace QuizAppForDriverLicense.Repository
             var answers= _context.UserAnswers.Where(x => x.UserId == userId).ToList();
             _context.UserAnswers.RemoveRange(answers);
             return _context.SaveChanges() > 0;
+        }
+
+        public List<Answer> GetByTemp(int tempId)
+        {
+            var randomTemp = _context.RandomTemps.Include(x=> x.Answers).SingleOrDefault(x => x.Id == tempId);
+
+            return randomTemp.Answers
+                .Select(x=>new Answer
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    IsTrue = x.IsTrue,
+                    QuestionId = x.QuestionId
+                })
+                .ToList();
         }
 
         public List<Answer> GetByUserId(string userId)

@@ -7,5 +7,6 @@ namespace QuizAppForDriverLicense.Repository.IRepository
         public List<Answer> GetByUserId(string userId);
 
         public bool ClearAllAnswerByUserId(string userId);
+        public List<Answer> GetByTemp(int tempId);
     }
 }
