@@ -32,7 +32,7 @@ jobs:
       # Build image mới
       - name: Build image
         run: |
-          docker build -t exefei .
+          docker build -t feprn .
   
       # Chạy container mới
       - name: Run container
