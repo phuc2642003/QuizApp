@@ -127,7 +127,7 @@
             }
 
             $.ajax({
-                url: `http://localhost:5121/api/Answer/userId?userId=${userId}`,
+                url: `http://103.163.24.25:9090/api/Answer/userId?userId=${userId}`,
                 type: 'DELETE',
                 success: function (response) {
                     location.reload();
@@ -151,7 +151,7 @@
             let activeTabId = $(".quiz-nav .nav-tabs .nav-link.active").attr("href");
 
             $.ajax({
-                url: `http://localhost:5121/api/Question/${categoryId}`,
+                url: `http://103.163.24.25:9090/api/Question/${categoryId}`,
                 method: "GET",
                 success: function (data) {
                     let questionBox = $(".question-box");
@@ -241,7 +241,7 @@
             let answerId = $(this).val();
 
             $.ajax({
-                url: "http://localhost:5121/api/UserAnswer",
+                url: "http://103.163.24.25:9090/api/UserAnswer",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({

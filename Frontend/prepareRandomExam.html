@@ -64,7 +64,7 @@
 
 
                 $.ajax({
-                    url: "http://localhost:5121/api/RandomTemp",
+                    url: "http://103.163.24.25:9090/api/RandomTemp",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(randomTempData),
@@ -73,12 +73,12 @@
 
 
                         $.ajax({
-                            url: `http://localhost:5121/api/Question/AddToTemp/${userId}`,
+                            url: `http://103.163.24.25:9090/api/Question/AddToTemp/${userId}`,
                             type: "POST",
                             success: function () {
                                 console.log("Thêm câu hỏi ngẫu nhiên thành công");
                                 $.ajax({
-                                    url: `http://localhost:5121/api/RandomTemp/LastTemp/${userId}`,
+                                    url: `http://103.163.24.25:9090/api/RandomTemp/LastTemp/${userId}`,
                                     type: "GET",
                                     success: function (response) {
                                         console.log("Lấy tempId thành công:", response);
@@ -106,7 +106,7 @@
             var userId = localStorage.getItem("userId");
 
             $.ajax({
-                url: `http://localhost:5121/api/TempResult/History/${userId}`,
+                url: `http://103.163.24.25:9090/api/TempResult/History/${userId}`,
                 method: "GET",
                 success: function (data) {
                     var tbody = $("#historyTableBody");

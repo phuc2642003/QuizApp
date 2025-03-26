@@ -121,7 +121,7 @@
             }
 
             $.ajax({
-                url: `http://localhost:5121/api/Question/RandomTemp/${tempId}`,
+                url: `http://103.163.24.25:9090/api/Question/RandomTemp/${tempId}`,
                 method: "GET",
                 success: function (data) {
                     let questionBox = $(".question-box");
@@ -135,7 +135,7 @@
                     }
 
                     $.ajax({
-                        url: `http://localhost:5121/api/Answer/TempAnswer/${tempId}`,
+                        url: `http://103.163.24.25:9090/api/Answer/TempAnswer/${tempId}`,
                         method: "GET",
                         success: function (savedAnswers) {
                             let savedAnswerIds = savedAnswers.map(a => a.id); // Chuyển về mảng ID
