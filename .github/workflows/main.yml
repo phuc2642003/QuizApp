@@ -3,7 +3,7 @@ name: Deploy production exe
 on:
   push:
     branches: 
-      - master
+      - main
 
 jobs:
   docker-compose:
