@@ -18,3 +18,25 @@ jobs:
         run: |
           cd Backend
           docker compose up --build -d
+      # Xóa container nếu đang chạy
+      - name: Stop & Remove container
+        run: |
+          docker stop fe-phuclh || true
+          docker rm fe-phuclh || true
+  
+      # Xóa image cũ nếu tồn tại
+      - name: Delete old image
+        run: |
+          docker rmi feprn || true
+  
+      # Build image mới
+      - name: Build image
+        run: |
+          docker build -t exefei .
+  
+      # Chạy container mới
+      - name: Run container
+        run: |
+          cd Frontend
+          docker run -d -p 9712:80 --name fe-phuclh feprn
+                
