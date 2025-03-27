@@ -27,6 +27,7 @@ jobs:
       # Xóa image cũ nếu tồn tại
       - name: Delete old image
         run: |
+          cd Frontend
           docker rmi feprn || true
   
       # Build image mới
