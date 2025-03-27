@@ -21,6 +21,6 @@ function logout() {
 }
 
 // Kiểm tra nếu chưa đăng nhập thì chuyển về trang login
-if (window.location.pathname.includes("home.html") && !localStorage.getItem("token")) {
+if (window.location.pathname.includes("index.html") && !localStorage.getItem("token")) {
     window.location.href = "login.html";
 }
