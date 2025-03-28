@@ -89,6 +89,18 @@
         .refresh-btn i {
             margin-right: 5px;
         }
+        #clock {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d9534f; /* Màu đỏ cảnh báo */
+            text-align: center;
+            padding: 10px;
+            background: #f8d7da; /* Nền đỏ nhạt */
+            border-radius: 5px;
+            margin-top: 10px;
+            display: inline-block;
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -107,12 +119,66 @@
         <div class="quiz-nav">
             <h6>Quiz Navigation</h6>
             <div class="d-flex flex-wrap nav nav-tabs" role="tablist"></div>
+
+            <div id="clock"></div>
             <button class="btn btn-success">Submit</button>
         </div>
     </div>
     <script src="authScript.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let timeLeft = 10 * 60;
+
+        function startCountdown() {
+            let timerElement = document.getElementById("clock");
+
+            function updateTimer() {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerElement.innerHTML = `Thời gian còn lại: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Hết thời gian! Hệ thống sẽ tự động nộp bài.");
+                    timeOutSubmit();
+                }
+                timeLeft--;
+            }
+
+            updateTimer();
+            let timerInterval = setInterval(updateTimer, 1000);
+        }
+        function timeOutSubmit() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let tempId = urlParams.get('tempId');
+
+            if (!tempId) {
+                alert("Temp ID không hợp lệ!");
+                return;
+            }
+
+            let selectedAnswers = [];
+
+            $(".question-box input[type='radio']:checked").each(function () {
+                selectedAnswers.push(parseInt($(this).val()));
+            });
+
+            $.ajax({
+                url: `http://103.163.24.25:9090/api/RandomTemp/Submit`,
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    answerId: selectedAnswers,
+                    tempId: parseInt(tempId)
+                }),
+                success: function () {
+                    alert("Nộp bài thành công!");
+                    window.location.href = `review.html?tempId=${tempId}`; // Điều hướng đến trang kết quả (nếu có)
+                },
+                error: function (xhr) {
+                    alert("Lỗi khi nộp bài: " + (xhr.responseText || "Không xác định"));
+                }
+            });
+        }
         function loadQuestions() {
             const urlParams = new URLSearchParams(window.location.search);
             let tempId = urlParams.get('tempId');
@@ -214,6 +280,7 @@
         }
         $(document).ready(function () {
             loadQuestions();
+            startCountdown();
             $(".quiz-nav button").click(function () {
                 submitAnswers();
             });

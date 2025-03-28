@@ -21,5 +21,12 @@ namespace QuizAppForDriverLicense.Controllers
 
             return Ok(tempResultInfoDtos);
         }
+        [HttpGet("{tempId}")]
+        public IActionResult Get(int tempId)
+        {
+            var tempResult = _randomTempRepository.GetTempResult(tempId);
+
+            return Ok(tempResult);
+        }    
     }
 }

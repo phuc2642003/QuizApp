@@ -83,17 +83,38 @@ namespace QuizAppForDriverLicense.Repository
             return tempResultInfoDtos;
         }
 
+        public TempResultInfoDto GetTempResult(int tempId)
+        {
+            var temp = _context.RandomTemps
+                .Include(x=>x.Answers)
+                .SingleOrDefault(x=>x.Id == tempId);
+            TempResultInfoDto result = new TempResultInfoDto()
+            {
+                TempId = temp.Id,
+                Point = temp.Answers.Where(x => x.IsTrue).Count(),
+                Pass = temp.Result >= temp.PassResult ? true : false
+            };
+
+            return result;
+        }
+
         public void UpdateResult(List<int> answers, int tempId)
         {
             int result = 0;
             var temp = Get(tempId);
             foreach(int i in answers)
             {
-                Answer a = _context.Answers.Find(i);
+                Answer a = _context.Answers
+                    .Include(a=>a.Question)
+                    .SingleOrDefault(a=>a.Id == i);
                 if(!a.IsTrue)
                 {
-                    temp.Result = -1;
-                    return;
+                    if(a.Question.IsCriticalFail)
+                    {
+                        temp.Result = -1;
+                        _context.SaveChanges();
+                        return;
+                    }      
                 }
                 else
                 {
@@ -101,6 +122,7 @@ namespace QuizAppForDriverLicense.Repository
                 }    
             }
             temp.Result = result;
+            _context.SaveChanges();
         }
     }
 }

@@ -169,10 +169,15 @@
                         let isCorrect = userAnswered ? userAnswered.isTrue : null;
                         let isActive = `id="question${q.id}"`;
 
+
+                        let fireIcon = q.isCriticalFail ? ' <span class="text-danger">🔥</span>' : '';
+                        let imgHtml = q.imgUrl ? `<img src="${q.imgUrl}" alt="Question Image" class="img-fluid mt-2">` : '';
+
                         let questionHtml = `
                         <div class="tab-pane fade" ${isActive}>
-                            <h5>${q.name}</h5>
+                            <h5>${q.name}${fireIcon}</h5>
                             <p><strong>${q.content}</strong></p>
+                            ${imgHtml}
                             <div class="list-group">
                                 ${q.answers.map(a => {
                                     let userAnswer = a.userAnswers.find(u => u.userId == userId);
@@ -196,9 +201,11 @@
                         </div>`;
 
                         questionBox.append(questionHtml);
-                        
+
                         let navClass = !userAnswered ? "text-primary" : (isCorrect ? "text-success" : "text-danger");
-                        let navHtml = `<a class="btn ${navClass} nav-link" data-bs-toggle="tab" href="#question${q.id}">${q.id}</a>`;
+                        
+                        // Thêm icon 🔥 vào tab nếu câu hỏi là Critical Fail
+                        let navHtml = `<a class="btn ${navClass} nav-link d-flex justify-content-center align-items-center" data-bs-toggle="tab" href="#question${q.id}">${q.id}</a>`;   
                         navTabs.append(navHtml);
                     });
 

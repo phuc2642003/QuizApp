@@ -13,5 +13,6 @@ namespace QuizAppForDriverLicense.Repository.IRepository
         public bool AddTempAnswers(List<int> answers, int tempId);
         public void UpdateResult(List<int> answers, int tempId);
         public List<TempResultInfoDto> GetResults(string userId);
+        public TempResultInfoDto GetTempResult(int tempId);
     }
 }
